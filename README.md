@@ -1,6 +1,6 @@
 # FaithGuide — Christian AI Assistant
 
-A denomination-aware, scripture-grounded AI assistant for Christians and spiritual seekers. Built with React and Pollinations.ai for both text and image generation.
+A denomination-aware, scripture-grounded AI assistant for Christians and spiritual seekers. Built with React, OpenRouter for text generation, and Pollinations.ai for image generation.
 
 ---
 
@@ -34,7 +34,7 @@ npm install
 
 ```bash
 cp .env.example .env
-# Edit .env and add your Pollinations API key (optional for higher limits)
+# Edit .env and add your OpenRouter API key for chat (required)
 ```
 
 ### 4. Run locally
@@ -99,7 +99,7 @@ Test categories:
 ## Environment Variables
 
 ```env
-VITE_POLLINATIONS_API_KEY=your_pollinations_api_key_here
+VITE_OPENROUTER_API_KEY=your_openrouter_api_key_here
 ```
 
 > **Note**: In production, never expose API keys client-side. Route requests through a backend.
@@ -117,7 +117,8 @@ See [ARCHITECTURE.md](./ARCHITECTURE.md) for full engineering decisions, groundi
 | Layer            | Technology                                    |
 | ---------------- | --------------------------------------------- |
 | Frontend         | React 18, JSX                                 |
-| AI & Image Gen   | Pollinations.ai (Kimi for text, Flux for images) |
+| Text Generation  | OpenRouter (auto / mistral-7b-instruct:free)  |
+| Image Generation | Pollinations.ai (Flux free tier)              |
 | Fonts            | Google Fonts (Playfair Display, Crimson Text) |
 | Safety           | Prompt engineering + client-side regex        |
 

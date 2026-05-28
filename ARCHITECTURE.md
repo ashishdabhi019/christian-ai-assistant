@@ -2,7 +2,7 @@
 
 ## Overview
 
-FaithGuide is a denomination-aware, scripture-grounded Christian AI assistant built on top of Pollinations.ai. It combines prompt engineering, client-side safety filtering, multimodal image generation, and conversation memory.
+FaithGuide is a denomination-aware, scripture-grounded Christian AI assistant built using OpenRouter for text generation and Pollinations.ai for image generation. It combines prompt engineering, client-side safety filtering, multimodal output, and conversation memory.
 
 ---
 
@@ -21,13 +21,13 @@ FaithGuide is a denomination-aware, scripture-grounded Christian AI assistant bu
 └──────────┼────────────────────────┼─────────────────┘
            │                        │
            ▼                        ▼
-┌─────────────────────────────────────────────────────┐
-│                 Pollinations.ai                     │
-│    ┌──────────────┐    ┌───────────────────────┐    │
-│    │  Text API    │    │   Image Generation    │    │
-│    │  (Kimi model)│    │   (Flux model)        │    │
-│    └──────────────┘    └───────────────────────┘    │
-└─────────────────────────────────────────────────────┘
+┌───────────────────────┐ ┌───────────────────────────┐
+│       OpenRouter      │ │     Pollinations.ai       │
+│  ┌─────────────────┐  │ │  ┌─────────────────────┐  │
+│  │   Text API      │  │ │  │   Image API (Free)  │  │
+│  │ (mistral/auto)  │  │ │  │   (Flux model)      │  │
+│  └─────────────────┘  │ │  └─────────────────────┘  │
+└───────────────────────┘ └───────────────────────────┘
 ```
 
 ---
@@ -164,7 +164,8 @@ For production, replace Pollinations with DALL-E 3 or Stability AI for higher qu
 | Layer     | Technology                                      |
 | --------- | ----------------------------------------------- |
 | Frontend  | React (JSX), inline styles                      |
-| AI & Image Gen | Pollinations.ai (Kimi for text, Flux for images) |
+| Text Gen  | OpenRouter (mistral-7b-instruct:free / auto)    |
+| Image Gen | Pollinations.ai (Flux free tier)                |
 | Fonts     | Google Fonts (Playfair Display, Crimson Text)   |
 | Safety    | Prompt engineering + client-side filter         |
 | Memory    | React useState (in-session)                     |

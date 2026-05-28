@@ -161,16 +161,36 @@ function TypingDots() {
 
 const generatePollinationsImage = (prompt, apiKey) => {
   const seed = Math.floor(Math.random() * 999999);
-  return `https://gen.pollinations.ai/image/${encodeURIComponent(prompt)}?model=flux&width=1024&height=1024&seed=${seed}&enhance=false&key=${apiKey}`;
+  let url = `https://gen.pollinations.ai/image/${encodeURIComponent(prompt)}?model=flux&width=1024&height=1024&seed=${seed}&enhance=false`;
+  if (apiKey) url += `&key=${apiKey}`;
+  return url;
 };
 
-const generatePollinationsText = async (prompt, apiKey) => {
-  const url = `https://gen.pollinations.ai/text/${encodeURIComponent(prompt)}?model=kimi&key=${apiKey}`;
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error('Failed to generate text');
+const generateOpenRouterText = async (messages, denomination, apiKey) => {
+  if (!apiKey) throw new Error("OpenRouter API Key is missing in .env");
+  
+  const sysMsg = { role: "system", content: getSystemPrompt(denomination) };
+  const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${apiKey}`,
+      "Content-Type": "application/json",
+      "HTTP-Referer": window.location.href,
+      "X-Title": "FaithGuide"
+    },
+    body: JSON.stringify({
+      model: "openrouter/auto",
+      messages: [sysMsg, ...messages.map(m => ({ role: m.role, content: m.content }))]
+    })
+  });
+  
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(`OpenRouter Error: ${errorData.error?.message || res.status}`);
   }
-  return await response.text();
+  
+  const data = await res.json();
+  return data.choices[0].message.content;
 };
 
 // ── IMAGE TAB ──
@@ -333,12 +353,9 @@ export default function App() {
     setLoading(true);
 
     try {
-      const apiKey = import.meta.env.VITE_POLLINATIONS_API_KEY || "";
-      const systemPrompt = getSystemPrompt(denomination);
-      const conversationHistory = allMessages.map(m => `${m.role === "user" ? "User" : "Assistant"}: ${m.content}`).join("\n");
-      const fullPrompt = `${systemPrompt}\n\n${conversationHistory}\nAssistant:`;
+      const openRouterKey = import.meta.env.VITE_OPENROUTER_API_KEY;
       
-      const reply = await generatePollinationsText(fullPrompt, apiKey);
+      const reply = await generateOpenRouterText(allMessages, denomination, openRouterKey);
       if (reply) {
         setMessages(prev => [...prev, { role:"assistant", content:reply }]);
       } else {
